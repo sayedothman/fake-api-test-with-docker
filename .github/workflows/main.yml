@@ -1,0 +1,62 @@
+name: CI - Dockerized API Tests with Allure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t fake-api-test:latest .
+
+      - name: Run tests in container
+        continue-on-error: true
+        run: |
+          docker run --name test-container \
+            -e BASE_URL="https://fakerestapi.azurewebsites.net/api/v1" \
+            fake-api-test:latest mvn test
+
+      - name: Copy Allure results from container
+        run: |
+          docker cp test-container:/app/target/allure-results ./allure-results
+          docker rm test-container
+
+      - name: Install Allure CLI
+        run: |
+          wget https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.24.0/allure-commandline-2.24.0.zip
+          unzip allure-commandline-2.24.0.zip -d allure-cli
+          sudo ln -s $PWD/allure-cli/allure-2.24.0/bin/allure /usr/bin/allure
+
+      - name: Generate Allure Report
+        run: allure generate ./allure-results -o ./allure-report --clean
+
+      - name: Deploy Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          publish_branch: gh-pages
+          force_orphan: true
+          enable_jekyll: false
+
+      - name: Check for test failures in Allure results
+        run: |
+          echo "Checking Allure results (JSON) for failed tests..."
+          failed_count=$(jq -r 'select(.status=="failed")' ./allure-results/*.json | wc -l)
+          if [ "$failed_count" -gt 0 ]; then
+            echo "Detected failed test(s) from Allure results."
+            exit 1
+          else
+            echo "No failed tests detected in Allure results."
+          fi
