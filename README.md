@@ -94,4 +94,4 @@ This project uses GitHub Actions to:
 
 ### Allure report will be available at:
 
-https://sayed-othman.github.io/fake-api-test-with-docker/
+https://sayedothman.github.io/fake-api-test-with-docker/
