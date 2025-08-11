@@ -1,0 +1,30 @@
+<div>PUT to https://fakerestapi.azurewebsites.net/api/v1/Authors/50</div>
+
+<h4>Body</h4>
+<div>
+    <pre class="preformated-text">
+{
+    &quot;id&quot;: &quot;bad_id&quot;,
+    &quot;idBook&quot;: 253,
+    &quot;firstName&quot;: &quot;Vanesa&quot;,
+    &quot;lastName&quot;: &quot;Smith&quot;
+}    </pre>
+</div>
+
+<h4>Headers</h4>
+<div>
+        <div>Accept: */*</div>
+        <div>Content-Type: application/json</div>
+</div>
+
+
+
+<h4>Curl</h4>
+<div>
+curl -v -X PUT &#39;https://fakerestapi.azurewebsites.net/api/v1/Authors/50&#39; -H &#39;Accept: */*&#39; -H &#39;Content-Type: application/json&#39; -d &#39;{
+    &quot;id&quot;: &quot;bad_id&quot;,
+    &quot;idBook&quot;: 253,
+    &quot;firstName&quot;: &quot;Vanesa&quot;,
+    &quot;lastName&quot;: &quot;Smith&quot;
+}&#39;
+</div>
