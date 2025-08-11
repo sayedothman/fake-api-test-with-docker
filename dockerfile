@@ -1,5 +1,4 @@
-FROM maven:3.9.3-eclipse-temurin-18
-
+FROM eclipse-temurin:18-jdk
 WORKDIR /app
 
 # Copy only pom.xml first to leverage Docker cache for dependencies
